@@ -124,6 +124,18 @@ final class ReamUITests: XCTestCase {
         XCTAssertTrue(deleteButton.isHittable, "Delete button exists but is not hittable even after scrolling")
         deleteButton.tap()
 
+        // Wait for the edit-supply sheet to actually finish dismissing before
+        // checking the Home list — tapping Delete both mutates @Published items
+        // and calls dismiss() in the same closure; if the check runs while the
+        // sheet dismiss animation and the Combine-driven list re-render are still
+        // settling, the stale element can still briefly satisfy existsNoRetry.
+        let editFormNavBar = app.navigationBars["Edit Supply"]
+        let dismissedExpectation = XCTNSPredicateExpectation(
+            predicate: NSPredicate(format: "exists == false"),
+            object: editFormNavBar
+        )
+        _ = XCTWaiter.wait(for: [dismissedExpectation], timeout: 6)
+
         XCTAssertFalse(app.buttons["supplyNameLabel_Glue Stick"].waitForExistence(timeout: 6), "Supply was not deleted")
     }
 
