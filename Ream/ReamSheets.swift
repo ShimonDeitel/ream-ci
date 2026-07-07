@@ -100,10 +100,19 @@ struct SupplyFormView: View {
                 if isEditing {
                     Section {
                         Button("Delete Supply", role: .destructive) {
-                            if let existing {
-                                store.deleteSupply(existing.id)
-                            }
+                            // Dismiss first, then mutate the store on the next
+                            // run loop turn. Calling dismiss() and a @Published
+                            // store mutation in the same synchronous closure
+                            // appeared to race/drop the mutation in CI (the
+                            // sheet dismissed but the item never left the Home
+                            // list) — deferring the mutation past the dismiss
+                            // transaction avoids that.
                             dismiss()
+                            if let existing {
+                                DispatchQueue.main.async {
+                                    store.deleteSupply(existing.id)
+                                }
+                            }
                         }
                         .accessibilityIdentifier("deleteSupplyButton")
                     }
