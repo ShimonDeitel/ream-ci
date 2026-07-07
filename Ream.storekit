@@ -1,0 +1,29 @@
+{
+  "identifier" : "ream",
+  "nonRenewingSubscriptions" : [],
+  "products" : [
+    {
+      "displayPrice" : "2.99",
+      "familyShareable" : false,
+      "internalID" : "ream_pro_unlock",
+      "localizations" : [
+        {
+          "description" : "Unlocks unlimited kids and supplies",
+          "displayName" : "Ream Pro",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "ream_pro_unlock",
+      "referenceName" : "Ream Pro Unlock",
+      "type" : "NonConsumable"
+    }
+  ],
+  "settings" : {
+    "_askToBuyEnabled" : false
+  },
+  "subscriptionGroups" : [],
+  "version" : {
+    "major" : 3,
+    "minor" : 0
+  }
+}
