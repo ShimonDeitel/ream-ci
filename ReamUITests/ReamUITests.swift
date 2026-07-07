@@ -140,12 +140,17 @@ final class ReamUITests: XCTestCase {
         )
         _ = XCTWaiter.wait(for: [dismissedExpectation], timeout: 6)
 
-        // Extra settle time for the Combine publish -> SwiftUI diff -> Form
-        // row removal to finish propagating on a loaded CI runner, then a
-        // final fresh existence check (not reusing a possibly-stale element
-        // reference captured before the mutation).
-        Thread.sleep(forTimeInterval: 2.0)
-        let stillThere = app.buttons["supplyNameLabel_Glue Stick"].exists
+        // Poll rather than a single fixed-delay snapshot check -- a one-shot
+        // `.exists` after a flat sleep races the Combine publish -> SwiftUI
+        // diff -> Form row removal pipeline on a loaded CI runner.
+        var stillThere = true
+        for _ in 0..<40 {
+            if !app.buttons["supplyNameLabel_Glue Stick"].exists {
+                stillThere = false
+                break
+            }
+            usleep(250_000)
+        }
         XCTAssertFalse(stillThere, "Supply was not deleted")
     }
 
