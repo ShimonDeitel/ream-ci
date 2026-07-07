@@ -110,7 +110,9 @@ final class ReamUITests: XCTestCase {
         XCTAssertTrue(label.waitForExistence(timeout: 12))
         label.tap()
 
-        app.buttons["deleteSupplyButton"].tap()
+        let deleteButton = app.buttons["deleteSupplyButton"]
+        XCTAssertTrue(deleteButton.waitForExistence(timeout: 8), "Delete button did not appear in edit form")
+        deleteButton.tap()
 
         XCTAssertFalse(app.buttons["supplyNameLabel_Glue Stick"].waitForExistence(timeout: 6), "Supply was not deleted")
     }
