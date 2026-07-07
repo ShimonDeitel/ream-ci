@@ -140,7 +140,7 @@ final class ReamUITests: XCTestCase {
         // row removal to finish propagating on a loaded CI runner, then a
         // final fresh existence check (not reusing a possibly-stale element
         // reference captured before the mutation).
-        Thread.sleep(forTimeInterval: 1.0)
+        Thread.sleep(forTimeInterval: 2.0)
         let stillThere = app.buttons["supplyNameLabel_Glue Stick"].exists
         XCTAssertFalse(stillThere, "Supply was not deleted")
     }
