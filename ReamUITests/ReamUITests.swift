@@ -115,14 +115,18 @@ final class ReamUITests: XCTestCase {
         // The Delete Supply button lives in the last Form section, below the
         // restock-threshold slider, and may not be scrolled into view yet even
         // though it already exists in the accessibility hierarchy — tapping a
-        // non-hittable-but-existing element can silently no-op. Scroll it into
-        // view first, matching the isHittable-guard pattern used elsewhere in
-        // this file (see testFreeSupplyLimitTriggersPaywall).
-        if !deleteButton.isHittable {
+        // non-hittable-but-existing element can silently no-op. A blind
+        // app.swipeUp() risks scrolling the wrong amount/direction or landing
+        // the drag on the Slider thumb just above the button, which can eat
+        // the gesture instead of scrolling — use scrollToElement-style repeated
+        // small drags anchored on the button itself, and tap via its own
+        // coordinate rather than relying on element.tap() picking the right
+        // hit point after scrolling.
+        for _ in 0..<3 where !deleteButton.isHittable {
             app.swipeUp()
         }
         XCTAssertTrue(deleteButton.isHittable, "Delete button exists but is not hittable even after scrolling")
-        deleteButton.tap()
+        deleteButton.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
 
         // Wait for the edit-supply sheet to actually finish dismissing before
         // checking the Home list — tapping Delete both mutates @Published items
