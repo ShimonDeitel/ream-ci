@@ -136,7 +136,13 @@ final class ReamUITests: XCTestCase {
         )
         _ = XCTWaiter.wait(for: [dismissedExpectation], timeout: 6)
 
-        XCTAssertFalse(app.buttons["supplyNameLabel_Glue Stick"].waitForExistence(timeout: 6), "Supply was not deleted")
+        // Extra settle time for the Combine publish -> SwiftUI diff -> Form
+        // row removal to finish propagating on a loaded CI runner, then a
+        // final fresh existence check (not reusing a possibly-stale element
+        // reference captured before the mutation).
+        Thread.sleep(forTimeInterval: 1.0)
+        let stillThere = app.buttons["supplyNameLabel_Glue Stick"].exists
+        XCTAssertFalse(stillThere, "Supply was not deleted")
     }
 
     func testFreeSupplyLimitTriggersPaywall() throws {
