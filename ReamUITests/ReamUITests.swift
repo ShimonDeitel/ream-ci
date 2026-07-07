@@ -32,8 +32,8 @@ final class ReamUITests: XCTestCase {
 
     func testHomeShowsSeededSupplies() throws {
         let app = launchApp()
-        XCTAssertTrue(app.staticTexts["supplyNameLabel_No. 2 Pencils"].waitForExistence(timeout: 12))
-        XCTAssertTrue(app.staticTexts["supplyNameLabel_Glue Stick"].waitForExistence(timeout: 12))
+        XCTAssertTrue(app.buttons["supplyNameLabel_No. 2 Pencils"].waitForExistence(timeout: 12))
+        XCTAssertTrue(app.buttons["supplyNameLabel_Glue Stick"].waitForExistence(timeout: 12))
     }
 
     /// Quirky action + confirmation: tapping "Use" visibly shrinks the
@@ -85,12 +85,12 @@ final class ReamUITests: XCTestCase {
         XCTAssertTrue(saveButton.waitForExistence(timeout: 8))
         saveButton.tap()
 
-        XCTAssertTrue(app.staticTexts["supplyNameLabel_Notebook Paper"].waitForExistence(timeout: 12), "New supply did not appear")
+        XCTAssertTrue(app.buttons["supplyNameLabel_Notebook Paper"].waitForExistence(timeout: 12), "New supply did not appear")
     }
 
     func testEditSupplyChangesName() throws {
         let app = launchApp()
-        let label = app.staticTexts["supplyNameLabel_No. 2 Pencils"]
+        let label = app.buttons["supplyNameLabel_No. 2 Pencils"]
         XCTAssertTrue(label.waitForExistence(timeout: 12))
         label.tap()
 
@@ -101,18 +101,18 @@ final class ReamUITests: XCTestCase {
 
         app.buttons["saveSupplyButton"].tap()
 
-        XCTAssertTrue(app.staticTexts["supplyNameLabel_Mechanical Pencils"].waitForExistence(timeout: 12), "Supply name did not update")
+        XCTAssertTrue(app.buttons["supplyNameLabel_Mechanical Pencils"].waitForExistence(timeout: 12), "Supply name did not update")
     }
 
     func testDeleteSupplyViaForm() throws {
         let app = launchApp()
-        let label = app.staticTexts["supplyNameLabel_Glue Stick"]
+        let label = app.buttons["supplyNameLabel_Glue Stick"]
         XCTAssertTrue(label.waitForExistence(timeout: 12))
         label.tap()
 
         app.buttons["deleteSupplyButton"].tap()
 
-        XCTAssertFalse(app.staticTexts["supplyNameLabel_Glue Stick"].waitForExistence(timeout: 6), "Supply was not deleted")
+        XCTAssertFalse(app.buttons["supplyNameLabel_Glue Stick"].waitForExistence(timeout: 6), "Supply was not deleted")
     }
 
     func testFreeSupplyLimitTriggersPaywall() throws {
@@ -122,6 +122,9 @@ final class ReamUITests: XCTestCase {
         for i in 0..<4 {
             let addButton = app.buttons["addSupplyButton"]
             XCTAssertTrue(addButton.waitForExistence(timeout: 12))
+            if !addButton.isHittable {
+                app.swipeDown()
+            }
             addButton.tap()
 
             let nameField = app.textFields["supplyNameField"]
