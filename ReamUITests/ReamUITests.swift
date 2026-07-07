@@ -112,6 +112,16 @@ final class ReamUITests: XCTestCase {
 
         let deleteButton = app.buttons["deleteSupplyButton"]
         XCTAssertTrue(deleteButton.waitForExistence(timeout: 8), "Delete button did not appear in edit form")
+        // The Delete Supply button lives in the last Form section, below the
+        // restock-threshold slider, and may not be scrolled into view yet even
+        // though it already exists in the accessibility hierarchy — tapping a
+        // non-hittable-but-existing element can silently no-op. Scroll it into
+        // view first, matching the isHittable-guard pattern used elsewhere in
+        // this file (see testFreeSupplyLimitTriggersPaywall).
+        if !deleteButton.isHittable {
+            app.swipeUp()
+        }
+        XCTAssertTrue(deleteButton.isHittable, "Delete button exists but is not hittable even after scrolling")
         deleteButton.tap()
 
         XCTAssertFalse(app.buttons["supplyNameLabel_Glue Stick"].waitForExistence(timeout: 6), "Supply was not deleted")
