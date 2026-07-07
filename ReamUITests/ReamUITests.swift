@@ -126,7 +126,11 @@ final class ReamUITests: XCTestCase {
             app.swipeUp()
         }
         XCTAssertTrue(deleteButton.isHittable, "Delete button exists but is not hittable even after scrolling")
-        deleteButton.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+        // Plain tap() rather than a coordinate tap -- exercises the exact same
+        // interaction a real user performs, and coordinate-based taps on this
+        // specific Form row proved to silently no-op in CI despite the element
+        // reporting isHittable == true.
+        deleteButton.tap()
 
         // Wait for the edit-supply sheet to actually finish dismissing before
         // checking the Home list — tapping Delete both mutates @Published items
